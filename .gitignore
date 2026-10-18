@@ -1,0 +1,84 @@
+# ==========================================
+# Flutter / Dart
+# ==========================================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+**/build/
+**/doc/api/
+
+# ==========================================
+# Android (Personal paths & build artifacts)
+# ==========================================
+local.properties
+**/local.properties
+**/android/local.properties
+.gradle/
+**/.gradle/
+android/.gradle/
+**/android/.gradle/
+android/app/debug/
+android/app/profile/
+android/app/release/
+*.apk
+*.aab
+*.jks
+*.keystore
+*.key
+key.properties
+**/key.properties
+
+# ==========================================
+# iOS (Personal paths & generated build files)
+# ==========================================
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/app.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/profile
+**/ios/release
+**/ios/DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+project.xcworkspace/
+xcuserdata/
+
+# ==========================================
+# Web / Desktop
+# ==========================================
+lib/generated_plugin_registrant.dart
+**/windows/flutter/ephemeral/
+**/linux/flutter/ephemeral/
+**/macos/Flutter/ephemeral/
+
+# ==========================================
+# IDEs, Editors & Secrets
+# ==========================================
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.history/
+*.log
+*.env
+*.env.*
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# AI Agent / Temp Files
+# ==========================================
+.gemini/
+.agents/
+scratch/
