@@ -53,7 +53,7 @@ Günlük alışverişlerimizde bir ürünün boykot kapsamında olup olmadığı
 Android cihazınıza uygulamayı hemen yüklemek için:
 
 1. Projenin sağ sütunundaki [**Releases**](../../releases) sekmesine gidin.
-2. En güncel sürümün altındaki **`BoykotBarkodu.apk`** dosyasını telefonunuza indirin.
+2. En güncel sürümün altındaki **`BoykotBarkodu.apk`** dosyasını telefonunuza indirin *(Hafifletilmiş sürüm: sadece ~24 MB)*.
 3. İndirilen `.apk` dosyasına dokunun ve **Yükle** seçeneğini seçin.
    * *Not:* Telefonunuz ilk defa tarayıcıdan dosya yüklüyorsa *"Bilinmeyen uygulamaları yükle / Bu kaynaktan izin ver"* uyarısı verebilir; izin verip yüklemeyi tamamlayabilirsiniz.
 4. Kurulum bittiğinde uygulama simgesi ana ekranınıza gelecektir!
