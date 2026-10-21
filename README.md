@@ -58,7 +58,6 @@ Android cihazınıza uygulamayı hemen yüklemek için:
 
 1. Proje ana dizinindeki veya [**Releases**](../../releases) sekmesindeki APK dosyalarını telefonunuza indirin:
    * **`BoykotBarkodu.apk`** — Modern 64-bit Android telefonlar için optimize edilmiş ana sürüm *(~24-26 MB)*.
-   * **`BoykotBarkodu-v7a.apk`** — Eski nesil 32-bit Android cihazlar için hafifletilmiş sürüm *(~21 MB)*.
 2. İndirilen `.apk` dosyasına dokunun ve **Yükle** seçeneğini seçin.
    * *Not:* Telefonunuz ilk defa tarayıcıdan dosya yüklüyorsa *"Bilinmeyen uygulamaları yükle / Bu kaynaktan izin ver"* uyarısı verebilir; izin verip yüklemeyi tamamlayabilirsiniz.
 3. Kurulum bittiğinde uygulama simgesi ana ekranınıza gelecektir!
