@@ -32,7 +32,8 @@ Günlük alışverişlerimizde bir ürünün boykot kapsamında olup olmadığı
 ## ✨ Öne Çıkan Özellikler
 
 * **⚡ Ultra Hızlı Barkod Tarama:** EAN-13, EAN-8, UPC-A ve UPC-E barkodlarını kamera ile anında yakalar.
-* **🔍 Güçlendirilmiş Çoklu Kaynak Doğrulama Motoru:**
+* **🔍 Güçlendirilmiş Çoklu Kaynak Doğrulama Motoru (İhtiyati Konsensüs):**
+  * **⚖️ Ortak Karar İlkesi:** 3 boykot platformundan (BYKT.ORG, Boykot Dedektifi, Boykot.co) veya yerel arşivden **herhangi birinde dahi** marka boykotlu olarak kayıtlıysa, diğer platformlar unutmuş veya henüz güncellememiş olsa bile sonuç **KESİN BOYKOT** kabul edilir; hiçbir boykot gözden kaçmaz.
   * **BYKT.ORG Entegrasyonu (Yeni):** 1.300+ markayı (895 boykotlu, 139 şüpheli, 268 temiz alternatif) kapsayan devasa güncel arşiv. Ayrıntılı Türkçe gerekçeler, kanıt linkleri ve sektör alternatifleri.
   * **Boykot Dedektifi (`boykotdedektifi.com`):** Güncel boykot arşivi ve alternatif ürün entegrasyonu.
   * **Boykot.co (`boykot.co`):** Doğrulanmış boykot incelemeleri ve alternatif listeleri.

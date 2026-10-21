@@ -94,14 +94,27 @@ void main() {
       expect(result.alternatives.any((a) => a.name.contains('Bingo') || a.name.contains('Boron')), isTrue);
     });
 
-    test('Torku brand is detected as Clean / Not Boycott', () async {
+    test('Eti brand is detected as Clean / Not Boycott', () async {
+      final result = await boycottService.checkBoycott(
+        barcode: '8690526012345',
+        productName: 'Eti Karam Gurme',
+        brandName: 'Eti',
+      );
+
+      expect(result.isClean, isTrue);
+    });
+
+    test('Consensus rule: If even one platform flags brand as Boycott, it becomes Boycott', () async {
+      // Torku is clean in local database, but BYKT.ORG lists it as Boycott.
+      // The consensus rule guarantees Boycott takes priority.
       final result = await boycottService.checkBoycott(
         barcode: '8697426123456',
         productName: 'Torku Çikolata',
         brandName: 'Torku',
       );
 
-      expect(result.isClean, isTrue);
+      expect(result.isBoycott, isTrue);
+      expect(result.source, contains('BYKT.ORG'));
     });
 
     test('729 barcode is flagged as Israeli origin', () async {

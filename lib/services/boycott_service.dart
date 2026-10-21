@@ -54,9 +54,9 @@ class BoycottService {
 
     final queryBrand = brandName.trim().isNotEmpty ? brandName.trim() : productName.trim();
 
-    // 1. ADIM: Yerel doğrulanmış veritabanında arama yap (En hızlı & en zengin içerik)
+    // 1. ADIM: Yerel doğrulanmış veritabanında kesin BOYKOT varsa doğrudan dön (0 ms yanıt)
     final localMatch = OfflineBoycottDatabase.findBrandInfo(queryBrand);
-    if (localMatch != null) {
+    if (localMatch != null && localMatch['status'] == BoycottStatus.boycott) {
       final rawAlts = (localMatch['alternatives'] as List<dynamic>?) ?? [];
       final alternatives = rawAlts
           .map((a) => AlternativeProduct(
@@ -69,12 +69,12 @@ class BoycottService {
 
       return ProductScanResult(
         barcode: barcode,
-        productName: productName,
+        productName: productName.isNotEmpty ? productName : queryBrand,
         brandName: brandName.isNotEmpty ? brandName : queryBrand,
         category: category,
         imageUrl: imageUrl,
-        status: localMatch['status'] as BoycottStatus,
-        statusText: localMatch['statusText'] as String,
+        status: BoycottStatus.boycott,
+        statusText: localMatch['statusText'] as String? ?? 'Boykot Listesinde',
         reason: localMatch['reason'] as String?,
         proofUrl: localMatch['proofUrl'] as String?,
         source: 'Boykot Dedektifi & Boykot.co Arşivi',
@@ -82,85 +82,182 @@ class BoycottService {
       );
     }
 
-    // 2. ADIM: BYKT.ORG Veritabanı ve Arama Sorgulaması (1300+ Güncel Marka)
-    try {
-      final byktResult = await _byktService.queryBrand(queryBrand);
-      if (byktResult != null) {
-        return ProductScanResult(
-          barcode: barcode,
-          productName: productName.isNotEmpty ? productName : (byktResult['brandName'] ?? queryBrand),
-          brandName: byktResult['brandName'] ?? queryBrand,
-          category: category ?? byktResult['category'],
-          imageUrl: imageUrl ?? byktResult['logoUrl'],
-          status: byktResult['status'] as BoycottStatus,
-          statusText: byktResult['statusText'] as String,
-          reason: byktResult['reason'] as String?,
-          proofUrl: byktResult['proofUrl'] as String?,
-          source: 'BYKT.ORG',
-          alternatives: (byktResult['alternatives'] as List<AlternativeProduct>?) ?? [],
-        );
-      }
-    } catch (_) {
-      // BYKT.ORG hatasında diğer kaynaklarla devam et
+    // 2. ADIM: Tüm platformları (BYKT.ORG, Boykot Dedektifi, Boykot.co) eş zamanlı (paralel) tara
+    // (Böylece sitelerden biri unutmuş olsa bile diğeri yakalar)
+    final futures = await Future.wait([
+      _byktService.queryBrand(queryBrand).catchError((_) => null),
+      _queryBoykotDedektifi(queryBrand).catchError((_) => null),
+      _queryBoykotCo(queryBrand).catchError((_) => null),
+    ]);
+
+    final byktRes = futures[0];
+    final bdRes = futures[1];
+    final bcoRes = futures[2];
+
+    // Yerel eşleşme varsa onu da adaylara ekle
+    Map<String, dynamic>? localCandidate;
+    if (localMatch != null) {
+      final rawAlts = (localMatch['alternatives'] as List<dynamic>?) ?? [];
+      final alts = rawAlts
+          .map((a) => AlternativeProduct(
+                name: a['name'] as String,
+                category: a['category'] as String?,
+                description: a['description'] as String?,
+                isLocal: true,
+              ))
+          .toList();
+
+      localCandidate = {
+        'brandName': queryBrand,
+        'status': localMatch['status'] as BoycottStatus,
+        'statusText': localMatch['statusText'] as String,
+        'reason': localMatch['reason'] as String?,
+        'proofUrl': localMatch['proofUrl'] as String?,
+        'source': 'Yerel Arşiv',
+        'alternatives': alts,
+      };
     }
 
-    // 3. ADIM: Boykot Dedektifi API sorgulaması
-    try {
-      final bdResult = await _queryBoykotDedektifi(queryBrand);
-      if (bdResult != null) {
-        return ProductScanResult(
-          barcode: barcode,
-          productName: productName,
-          brandName: bdResult['brandName'] ?? queryBrand,
-          category: category ?? bdResult['category'],
-          imageUrl: imageUrl ?? bdResult['logoUrl'],
-          status: bdResult['status'] as BoycottStatus,
-          statusText: bdResult['statusText'] as String,
-          reason: bdResult['reason'] as String?,
-          proofUrl: bdResult['proofUrl'] as String?,
-          source: 'Boykot Dedektifi',
-          alternatives: (bdResult['alternatives'] as List<AlternativeProduct>?) ?? [],
-        );
-      }
-    } catch (_) {
-      // Boykot dedektifi hatasında devam et
+    final candidates = <Map<String, dynamic>>[
+      if (localCandidate != null) localCandidate,
+      if (byktRes != null) byktRes,
+      if (bdRes != null) bdRes,
+      if (bcoRes != null) bcoRes,
+    ];
+
+    if (candidates.isEmpty) {
+      // Hiçbir sitede kayıt bulunamadı
+      return ProductScanResult(
+        barcode: barcode,
+        productName: productName,
+        brandName: queryBrand,
+        category: category,
+        imageUrl: imageUrl,
+        status: BoycottStatus.unknown,
+        statusText: 'Kayıt Bulunamadı',
+        reason: 'Bu marka veya ürün kontrol edilen 3 boykot platformunda (BYKT.ORG, Boykot Dedektifi, Boykot.co) kayıtlı görünmüyor. Üretici ve çatı şirket ilişkisi araştırılmaktadır.',
+        proofUrl: null,
+        source: 'Sistem Taraması (3 Platform)',
+        alternatives: const [],
+      );
     }
 
-    // 4. ADIM: Boykot.co Arama sorgulaması
-    try {
-      final bcoResult = await _queryBoykotCo(queryBrand);
-      if (bcoResult != null) {
-        return ProductScanResult(
-          barcode: barcode,
-          productName: productName,
-          brandName: bcoResult['brandName'] ?? queryBrand,
-          category: category,
-          imageUrl: imageUrl,
-          status: bcoResult['status'] as BoycottStatus,
-          statusText: bcoResult['statusText'] as String,
-          reason: bcoResult['reason'] as String?,
-          proofUrl: bcoResult['proofUrl'] as String?,
-          source: 'Boykot.co',
-          alternatives: (bcoResult['alternatives'] as List<AlternativeProduct>?) ?? [],
-        );
+    // -------------------------------------------------------------
+    // TEMEL KURAL: 3 siteden en az BİRİNDE dahi BOYKOT olarak geçiyorsa
+    // sonuç KESİN BOYKOT kabul edilir!
+    // -------------------------------------------------------------
+    final boycottCandidate = candidates.firstWhere(
+      (c) => c['status'] == BoycottStatus.boycott,
+      orElse: () => const {},
+    );
+
+    if (boycottCandidate.isNotEmpty) {
+      // Boykot kararı veren tüm platformların isimlerini birleştir
+      final boycottSources = candidates
+          .where((c) => c['status'] == BoycottStatus.boycott)
+          .map((c) => c['source'] as String? ?? 'Boykot Platformu')
+          .toSet()
+          .join(' & ');
+
+      // Tüm kaynaklardaki alternatifleri birleştir ve tekilleştir
+      final combinedAlts = <AlternativeProduct>[];
+      for (final c in candidates) {
+        final alts = c['alternatives'];
+        if (alts is List) {
+          for (final a in alts) {
+            if (a is AlternativeProduct &&
+                !combinedAlts.any((x) => x.name.toLowerCase() == a.name.toLowerCase())) {
+              combinedAlts.add(a);
+            }
+          }
+        }
       }
-    } catch (_) {
-      // Boykot.co hatasında devam et
+
+      // Logo/Resim önceliği
+      String? foundLogo = imageUrl;
+      if (foundLogo == null || foundLogo.isEmpty) {
+        for (final c in candidates) {
+          final logo = (c['logoUrl'] ?? c['imageUrl']) as String?;
+          if (logo != null && logo.isNotEmpty) {
+            foundLogo = logo;
+            break;
+          }
+        }
+      }
+
+      return ProductScanResult(
+        barcode: barcode,
+        productName: productName.isNotEmpty ? productName : (boycottCandidate['brandName'] ?? queryBrand),
+        brandName: boycottCandidate['brandName'] ?? queryBrand,
+        category: category ?? boycottCandidate['category'],
+        imageUrl: foundLogo,
+        status: BoycottStatus.boycott,
+        statusText: boycottCandidate['statusText'] ?? 'Boykot Listesinde',
+        reason: boycottCandidate['reason'] as String?,
+        proofUrl: boycottCandidate['proofUrl'] as String?,
+        source: boycottSources,
+        alternatives: combinedAlts,
+      );
     }
 
-    // 5. ADIM: Kayıt bulunamadı (Bilinmiyor / İncelemede)
+    // -------------------------------------------------------------
+    // İKİNCİ ÖNCELİK: Hiçbiri kesin boykot demedi ama en az biri
+    // ŞÜPHELİ / İNSAFA BAĞLI dediyse
+    // -------------------------------------------------------------
+    final suspectedCandidate = candidates.firstWhere(
+      (c) => c['status'] == BoycottStatus.suspected,
+      orElse: () => const {},
+    );
+
+    if (suspectedCandidate.isNotEmpty) {
+      final suspectedSources = candidates
+          .where((c) => c['status'] == BoycottStatus.suspected)
+          .map((c) => c['source'] as String? ?? 'Boykot Platformu')
+          .toSet()
+          .join(' & ');
+
+      return ProductScanResult(
+        barcode: barcode,
+        productName: productName.isNotEmpty ? productName : (suspectedCandidate['brandName'] ?? queryBrand),
+        brandName: suspectedCandidate['brandName'] ?? queryBrand,
+        category: category ?? suspectedCandidate['category'],
+        imageUrl: imageUrl ?? suspectedCandidate['logoUrl'] ?? suspectedCandidate['imageUrl'],
+        status: BoycottStatus.suspected,
+        statusText: suspectedCandidate['statusText'] ?? 'İnsafa Bağlı / Şüpheli',
+        reason: suspectedCandidate['reason'] as String?,
+        proofUrl: suspectedCandidate['proofUrl'] as String?,
+        source: suspectedSources,
+        alternatives: (suspectedCandidate['alternatives'] as List<AlternativeProduct>?) ?? [],
+      );
+    }
+
+    // -------------------------------------------------------------
+    // ÜÇÜNCÜ ÖNCELİK: Hiçbir platform boykot veya şüpheli demedi;
+    // Raporlayan platformların tamamı TEMİZ / ALINABİLİR dedi
+    // -------------------------------------------------------------
+    final cleanCandidate = candidates.firstWhere(
+      (c) => c['status'] == BoycottStatus.clean,
+      orElse: () => candidates.first,
+    );
+
+    final cleanSources = candidates
+        .where((c) => c['status'] == BoycottStatus.clean)
+        .map((c) => c['source'] as String? ?? 'Boykot Platformu')
+        .toSet()
+        .join(' & ');
+
     return ProductScanResult(
       barcode: barcode,
-      productName: productName,
-      brandName: queryBrand,
-      category: category,
-      imageUrl: imageUrl,
-      status: BoycottStatus.unknown,
-      statusText: 'Kayıt Bulunamadı',
-      reason: 'Bu marka veya ürün boykot listelerinde kayıtlı görünmüyor. Üretici ve çatı şirket ilişkisi araştırılmaktadır.',
-      proofUrl: null,
-      source: 'Sistem Sorgusu',
-      alternatives: [],
+      productName: productName.isNotEmpty ? productName : (cleanCandidate['brandName'] ?? queryBrand),
+      brandName: cleanCandidate['brandName'] ?? queryBrand,
+      category: category ?? cleanCandidate['category'],
+      imageUrl: imageUrl ?? cleanCandidate['logoUrl'] ?? cleanCandidate['imageUrl'],
+      status: BoycottStatus.clean,
+      statusText: cleanCandidate['statusText'] ?? 'Boykot Değil (Temiz)',
+      reason: cleanCandidate['reason'] as String? ?? 'Kontrol edilen platformlarda uygun ürün olarak değerlendirilmiştir.',
+      proofUrl: cleanCandidate['proofUrl'] as String?,
+      source: cleanSources.isNotEmpty ? cleanSources : 'Doğrulanmış Liste',
+      alternatives: const [],
     );
   }
 
