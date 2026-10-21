@@ -12,6 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-blue?style=for-the-badge&logo=android" alt="Platform" />
   <img src="https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter" alt="Flutter" />
+  <img src="https://img.shields.io/badge/Veri%20Kaynağı-BYKT.ORG%20%7C%20Boykot%20Dedektifi%20%7C%20Boykot.co-red?style=for-the-badge" alt="Veri Kaynakları" />
   <img src="https://img.shields.io/badge/Lisans-Açık%20Kaynak-green?style=for-the-badge" alt="Lisans" />
   <img src="https://img.shields.io/badge/Güvenlik-Sıfır%20Veri%20Toplama-success?style=for-the-badge" alt="Gizlilik" />
 </p>
@@ -31,18 +32,21 @@ Günlük alışverişlerimizde bir ürünün boykot kapsamında olup olmadığı
 ## ✨ Öne Çıkan Özellikler
 
 * **⚡ Ultra Hızlı Barkod Tarama:** EAN-13, EAN-8, UPC-A ve UPC-E barkodlarını kamera ile anında yakalar.
-* **🔍 Güvenilir Çift Kaynak Entegrasyonu:**
-  * **Boykot Dedektifi** (`boykotdedektifi.com`) ve **Boykot.co** güncel veritabanları ile canlı sorgulama.
-  * En sık tüketilen yüzlerce ürün için **çevrimdışı (offline) yerel veritabanı** (internetsiz de anında yanıt).
-  * 729 ile başlayan barkodlar için otomatik menşei (İsrail GS1) koruması.
-* **🛡️ Yerli & Temiz Alternatif Önerileri:** Boykotlu bir ürün algılandığında yerli üretici, kooperatif veya temiz alternatif markalar kartlar halinde sunulur.
-* **🤖 "AI'a Sor" Boykot Asistanı:**
-  * Sadece boykot konularına odaklanmış, uydurma/halüsinasyon üretmeyen **doğrulanmış sohbet motoru**.
-  * *"Ariel neden boykotta?"*, *"Nescafe yerine hangi kahveyi alabilirim?"*, *"729 barkod ne demek?"* gibi sorulara kaynaklarıyla anında yanıt verir.
-  * Sohbet geçmişini hatırlar; örneğin *"Peki alternatifi nedir?"* veya *"Kimin şirketi?"* diyerek takip sorusu sorabilirsiniz.
-* **✍️ Akıllı Kullanıcı Düzeltmesi:** Barkod veri tabanlarında henüz bulunmayan veya yanlış algılanan ürünleri tek dokunuşla kendi cihazınızda doğru markayla eşleştirebilirsiniz.
-* **📋 Tarama Geçmişi & Sayaç:** Taranan ürünleri, tarihlerini ve boykot istatistiklerini cihazınızda güvenle saklar.
-* **🌙 Premium Koyu Tema:** Markette ve loş ortamlarda gözü yormayan modern neon ve koyu arayüz tasarımı.
+* **🔍 Güçlendirilmiş Çoklu Kaynak Doğrulama Motoru:**
+  * **BYKT.ORG Entegrasyonu (Yeni):** 1.300+ markayı (895 boykotlu, 139 şüpheli, 268 temiz alternatif) kapsayan devasa güncel arşiv. Ayrıntılı Türkçe gerekçeler, kanıt linkleri ve sektör alternatifleri.
+  * **Boykot Dedektifi (`boykotdedektifi.com`):** Güncel boykot arşivi ve alternatif ürün entegrasyonu.
+  * **Boykot.co (`boykot.co`):** Doğrulanmış boykot incelemeleri ve alternatif listeleri.
+  * **Yerel Çevrimdışı Bellek (Offline):** Binlerce marka ve en sık tüketilen ürünler telefonunuzun hafızasında hazır tutulur; internetsizken bile milisaniyeler içinde anında yanıt verir.
+  * **729 GS1 Koruması:** İsrail tescilli (729 ile başlayan) tüm barkodlar için doğrudan otomatik menşei tespiti.
+* **🛡️ Akıllı Sektörel Alternatifler:** Boykotlu bir ürün algılandığında (ör. İçecek, Temizlik, Gıda) aynı kategoride güvenle tüketebileceğiniz yerli ve temiz alternatifler kartlar halinde önerilir.
+* **🤖 "AI'a Sor" Akıllı Boykot & Şirket Asistanı:**
+  * **Sıfır API Anahtarı, Sınırsız Bilgi:** Kullanıcıdan karmaşık API anahtarı istemeden veya kota sınırlarına takılmadan tamamen ücretsiz ve kesintisiz çalışan hibrit zeka motoru.
+  * **Şirket ve Kavram Açıklama (Yeni):** Boykot gerekçesinde adı geçen şirketleri ve terimleri derinlemesine araştırır. Örneğin Pepsi'yi sorup ardından *"SodaStream nedir ne iş yapar?"*, *"Atarot neresi?"* veya *"Stellantis hangi markalara sahip?"* dediğinizde Vikipedi ve boykot arşivi üzerinden detaylı şirket analizi ve boykot bağlantısı sunar.
+  * **Bağlam Hafızası & Esnek Diyalog:** Kullanıcıyı *"Sadece boykot danışabilirsin"* diye terslemeyen, konuşmanın akışındaki tüm takip sorularını kavrayan akıllı diyalog yönetimi.
+  * Sohbet geçmişini hatırlar; örneğin *"Peki alternatifi nedir?"* veya *"Bu şirket kimin?"* diyerek takip sorusu sorabilirsiniz.
+* **✍️ Kullanıcı Tanımlı Barkod Düzeltmesi:** Barkod veri tabanlarında henüz bulunmayan veya yanlış algılanan ürünleri tek dokunuşla kendi cihazınızda doğru markayla eşleştirebilirsiniz.
+* **📋 Tarama Geçmişi & İstatistikler:** Taranan ürünleri, tarihleri ve boykot oranlarını cihazınızda güvenle saklar.
+* **🌙 Modern Koyu & Açık Tema:** Markette ve loş ortamlarda gözü yormayan modern neon arayüz tasarımı.
 
 ---
 
@@ -52,11 +56,12 @@ Günlük alışverişlerimizde bir ürünün boykot kapsamında olup olmadığı
 
 Android cihazınıza uygulamayı hemen yüklemek için:
 
-1. Projenin sağ sütunundaki [**Releases**](../../releases) sekmesine gidin.
-2. En güncel sürümün altındaki **`BoykotBarkodu.apk`** dosyasını telefonunuza indirin *(Hafifletilmiş sürüm: sadece ~24 MB)*.
-3. İndirilen `.apk` dosyasına dokunun ve **Yükle** seçeneğini seçin.
+1. Proje ana dizinindeki veya [**Releases**](../../releases) sekmesindeki APK dosyalarını telefonunuza indirin:
+   * **`BoykotBarkodu.apk`** — Modern 64-bit Android telefonlar için optimize edilmiş ana sürüm *(~24-26 MB)*.
+   * **`BoykotBarkodu-v7a.apk`** — Eski nesil 32-bit Android cihazlar için hafifletilmiş sürüm *(~21 MB)*.
+2. İndirilen `.apk` dosyasına dokunun ve **Yükle** seçeneğini seçin.
    * *Not:* Telefonunuz ilk defa tarayıcıdan dosya yüklüyorsa *"Bilinmeyen uygulamaları yükle / Bu kaynaktan izin ver"* uyarısı verebilir; izin verip yüklemeyi tamamlayabilirsiniz.
-4. Kurulum bittiğinde uygulama simgesi ana ekranınıza gelecektir!
+3. Kurulum bittiğinde uygulama simgesi ana ekranınıza gelecektir!
 
 ---
 
@@ -101,11 +106,17 @@ cd boykotbarkodu
 # 2. Paketleri yükleyin
 flutter pub get
 
-# 3. Otomatik testleri çalıştırın
+# 3. Otomatik birim testlerini çalıştırın (21/21 test)
 flutter test
 
-# 4. Cihazınızda başlatın
+# 4. BYKT.ORG verilerini en güncel haline getirmek için (İsteğe bağlı)
+dart run tool/fetch_bykt_data.dart
+
+# 5. Cihazınızda başlatın
 flutter run
+
+# 6. APK derlemek için
+flutter build apk --split-per-abi
 ```
 
 ---
@@ -114,7 +125,7 @@ flutter run
 
 * **Kişisel Veri Yok:** Uygulama hiçbir kişisel bilgi toplamaz, saklamaz veya sunuculara göndermez.
 * **Kamera Erişimi:** Kamera yalnızca o anki barkodu okumak için kullanılır; hiçbir fotoğraf veya video kaydı yapılmaz.
-* **Çevrimdışı Bellek:** Tarama geçmişiniz ve kullanıcı tanımlı düzeltmeleriniz yalnızca kendi telefonunuzun yerel hafızasında (`SharedPreferences`) tutulur.
+* **Çevrimdışı Bellek:** Tarama geçmişiniz, BYKT.ORG arşivi ve kullanıcı tanımlı düzeltmeleriniz yalnızca kendi telefonunuzun yerel hafızasında tutulur.
 
 ---
 

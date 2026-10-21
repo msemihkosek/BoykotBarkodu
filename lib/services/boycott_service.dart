@@ -2,9 +2,14 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart' as html_parser;
 import '../models/boycott_result.dart';
+import 'bykt_service.dart';
 import 'offline_data.dart';
 
 class BoycottService {
+  final ByktService _byktService = ByktService();
+
+  ByktService get byktService => _byktService;
+
   final Dio _dio = Dio(
     BaseOptions(
       connectTimeout: const Duration(milliseconds: 4000),
@@ -77,7 +82,29 @@ class BoycottService {
       );
     }
 
-    // 2. ADIM: Boykot Dedektifi API sorgulaması
+    // 2. ADIM: BYKT.ORG Veritabanı ve Arama Sorgulaması (1300+ Güncel Marka)
+    try {
+      final byktResult = await _byktService.queryBrand(queryBrand);
+      if (byktResult != null) {
+        return ProductScanResult(
+          barcode: barcode,
+          productName: productName.isNotEmpty ? productName : (byktResult['brandName'] ?? queryBrand),
+          brandName: byktResult['brandName'] ?? queryBrand,
+          category: category ?? byktResult['category'],
+          imageUrl: imageUrl ?? byktResult['logoUrl'],
+          status: byktResult['status'] as BoycottStatus,
+          statusText: byktResult['statusText'] as String,
+          reason: byktResult['reason'] as String?,
+          proofUrl: byktResult['proofUrl'] as String?,
+          source: 'BYKT.ORG',
+          alternatives: (byktResult['alternatives'] as List<AlternativeProduct>?) ?? [],
+        );
+      }
+    } catch (_) {
+      // BYKT.ORG hatasında diğer kaynaklarla devam et
+    }
+
+    // 3. ADIM: Boykot Dedektifi API sorgulaması
     try {
       final bdResult = await _queryBoykotDedektifi(queryBrand);
       if (bdResult != null) {
@@ -99,7 +126,7 @@ class BoycottService {
       // Boykot dedektifi hatasında devam et
     }
 
-    // 3. ADIM: Boykot.co Arama sorgulaması
+    // 4. ADIM: Boykot.co Arama sorgulaması
     try {
       final bcoResult = await _queryBoykotCo(queryBrand);
       if (bcoResult != null) {
@@ -121,7 +148,7 @@ class BoycottService {
       // Boykot.co hatasında devam et
     }
 
-    // 4. ADIM: Kayıt bulunamadı (Bilinmiyor / İncelemede)
+    // 5. ADIM: Kayıt bulunamadı (Bilinmiyor / İncelemede)
     return ProductScanResult(
       barcode: barcode,
       productName: productName,

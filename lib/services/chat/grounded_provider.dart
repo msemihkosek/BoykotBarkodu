@@ -4,8 +4,8 @@ import '../offline_data.dart';
 import 'chat_models.dart';
 import 'chat_provider.dart';
 
-/// Cevapları yalnızca doğrulanmış verilerden (yerel marka veritabanı, Boykot Dedektifi,
-/// Boykot.co) üretir. Model kullanmaz; bu yüzden uydurma bilgi vermez ve çevrimdışı da çalışır.
+/// Cevapları yalnızca doğrulanmış verilerden (yerel marka veritabanı, BYKT.ORG,
+/// Boykot Dedektifi, Boykot.co) üretir. Model kullanmaz; bu yüzden uydurma bilgi vermez ve çevrimdışı da çalışır.
 class GroundedChatProvider implements ChatProvider {
   final BoycottService _boycottService;
 
@@ -90,9 +90,10 @@ class GroundedChatProvider implements ChatProvider {
         role: ChatRole.assistant,
         text: 'Bu uygulamada boykot, İsrail ekonomisine veya işgal politikalarına doğrudan destek '
             'verdiği belgelenen şirket ve markaların ürünlerini satın almamak anlamına gelir. '
-            'Listeler Boykot Dedektifi ve Boykot.co gibi kaynaklardan derlenir; her kayıtta mümkün '
+            'Listeler BYKT.ORG, Boykot Dedektifi ve Boykot.co gibi kaynaklardan derlenir; her kayıtta mümkün '
             'olduğunca gerekçe ve kanıt bağlantısı gösterilir.',
         sources: const [
+          ChatSource(label: 'BYKT.ORG', url: 'https://bykt.org'),
           ChatSource(label: 'Boykot Dedektifi', url: 'https://boykotdedektifi.com'),
           ChatSource(label: 'Boykot.co', url: 'https://www.boykot.co'),
         ],

@@ -22,9 +22,10 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isThinking = false;
 
   static const List<String> _suggestions = [
-    'Ariel neden boykotta?',
-    'Nescafe yerine ne alabilirim?',
-    'Erikli boykot mu?',
+    'Pepsi neden boykotta?',
+    'SodaStream nedir?',
+    'Ariel yerine ne alabilirim?',
+    'Stellantis hangi şirket?',
     '729 barkod ne demek?',
   ];
 
@@ -114,7 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: Text(
-                'Cevaplar Boykot Dedektifi ve Boykot.co kaynaklı verilerden gelir. Kaynağı kontrol edin.',
+                'Cevaplar BYKT.ORG, Boykot Dedektifi, Boykot.co ve Vikipedi açık kaynaklarından doğrulanır.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 11, color: AppColors.neutralGray),
               ),
@@ -143,13 +144,13 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Boykot hakkında sorun',
+            'Boykot & Şirket Asistanı',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 8),
           const Text(
-            'Bir markanın boykot durumunu, gerekçesini ve yerli alternatiflerini sorabilirsiniz. '
-            'Boykot dışındaki konulara cevap vermem.',
+            'Bir markanın boykot durumunu, çatı şirketini, neden boykot edildiğini, '
+            'bahsi geçen şirketlerin ne iş yaptığını ve yerli alternatiflerini sorabilirsiniz.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 13.5, height: 1.45, color: AppColors.neutralGray),
           ),

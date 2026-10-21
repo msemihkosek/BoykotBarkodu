@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:boykotbarkodu/services/chat/chat_models.dart';
 import 'package:boykotbarkodu/services/chat/chat_service.dart';
+import 'package:boykotbarkodu/services/chat/company_knowledge_service.dart';
 import 'package:boykotbarkodu/services/chat/grounded_provider.dart';
 import 'package:boykotbarkodu/services/chat/topic_gate.dart';
 
@@ -14,6 +15,21 @@ void main() {
       expect(TopicGate.isRelevant('729 barkodu nedir?'), isTrue);
       expect(TopicGate.isRelevant('Coca-Cola boykot mu?'), isTrue);
       expect(TopicGate.isRelevant('Bu ürün yerli mi?'), isTrue);
+    });
+
+    test('Company inquiry and follow-up questions are allowed', () {
+      expect(TopicGate.isRelevant('SodaStream nedir?'), isTrue);
+      expect(TopicGate.isRelevant('Stellantis ne iş yapar?'), isTrue);
+
+      final history = [
+        ChatMessage(role: ChatRole.user, text: 'Pepsi neden boykotta?'),
+        ChatMessage(
+          role: ChatRole.assistant,
+          text: 'PepsiCo, işgal altındaki topraklardaki SodaStream şirketini satın almıştır.',
+        ),
+      ];
+      expect(TopicGate.isRelevant('Peki bu şirket ne iş yapar?', history), isTrue);
+      expect(TopicGate.isRelevant('SodaStream hakkında bilgi ver', history), isTrue);
     });
 
     test('Off-topic questions are rejected', () {
@@ -60,13 +76,38 @@ void main() {
     });
   });
 
+  group('CompanyKnowledgeService Tests', () {
+    final service = CompanyKnowledgeService();
+
+    test('Explains SodaStream using Wikipedia and Boycott connection', () async {
+      final reply = await service.reply('SodaStream nedir?', []);
+      expect(reply, isNotNull);
+      expect(reply!.text.toLowerCase().contains('sodastream'), isTrue);
+      expect(reply.text.contains('Vikipedi') || reply.text.contains('İsrail'), isTrue);
+      expect(reply.sources.isNotEmpty, isTrue);
+    });
+
+    test('Answers contextual follow-up about company mentioned in previous message', () async {
+      final history = [
+        ChatMessage(role: ChatRole.user, text: 'Pepsi neden boykotta?'),
+        ChatMessage(
+          role: ChatRole.assistant,
+          text: 'PepsiCo, işgal topraklarındaki İsrailli "SodaStream" şirketini satın almış ve endüstriye yatırım yapmaktadır.',
+        ),
+      ];
+      final reply = await service.reply('Bu şirket ne iş yapar?', history);
+      expect(reply, isNotNull);
+      expect(reply!.text.toLowerCase().contains('sodastream'), isTrue);
+    });
+  });
+
   group('ChatService Tests', () {
     final service = ChatService();
 
     test('Off-topic question triggers polite refusal notice', () async {
       final reply = await service.ask('Bana yemek tarifi ver', []);
       expect(reply.isNotice, isTrue);
-      expect(reply.text.contains('sadece boykotla ilgili'), isTrue);
+      expect(reply.text.contains('boykot gerekçeleri'), isTrue);
     });
 
     test('Relevant brand question returns answer with sources', () async {
@@ -74,6 +115,19 @@ void main() {
       expect(reply.isNotice, isFalse);
       expect(reply.text.toLowerCase().contains('boykot'), isTrue);
       expect(reply.sources.isNotEmpty, isTrue);
+    });
+
+    test('Follow-up company question does NOT get blocked and answers meaningfully', () async {
+      final history = [
+        ChatMessage(role: ChatRole.user, text: 'Pepsi neden boykotta?'),
+        ChatMessage(
+          role: ChatRole.assistant,
+          text: 'PepsiCo, işgal topraklarındaki İsrailli SodaStream şirketini satın almıştır.',
+        ),
+      ];
+      final reply = await service.ask('SodaStream nedir?', history);
+      expect(reply.isNotice, isFalse);
+      expect(reply.text.toLowerCase().contains('sodastream'), isTrue);
     });
   });
 }
